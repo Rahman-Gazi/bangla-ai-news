@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080b14">
+<meta name="description" content="Bangla AI News Studio — বাংলা অডিও ও ভিডিও থেকে ট্রান্সক্রিপ্ট এবং সংবাদ তৈরি করার AI স্টুডিও।">
+<title>Bangla AI News Studio</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --bg: #080b14;
+  --panel: #101522;
+  --panel2: #141b2b;
+  --line: rgba(255,255,255,.09);
+  --text: #f3f6ff;
+  --muted: #929bb1;
+  --green: #57e3a2;
+  --blue: #7589ff;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(ellipse at 70% -10%, rgba(92,110,255,.14), transparent 42%),
+    var(--bg);
+  color: var(--text);
+  font-family: 'Hind Siliguri', sans-serif;
+  min-height: 100vh;
+}
+
+button, input { font: inherit; }
+button { cursor: pointer; }
+
+.app { min-height: 100vh; }
+
+.topbar {
+  height: 76px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 5%;
+  gap: 16px;
+  background: rgba(8,11,20,.84);
+  backdrop-filter: blur(20px);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.brand { display:flex; align-items:center; gap:12px; }
+
+.logo {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  font-size: 23px;
+  background: linear-gradient(135deg,#65efb0,#43a9a8);
+  color: #071711;
+  box-shadow: 0 0 30px rgba(87,227,162,.17);
+}
+
+.brand-name {
+  font: 800 17px Inter,sans-serif;
+  letter-spacing: -.7px;
+}
+
+.brand-name span { color: var(--green); }
+
+.brand-sub { color: var(--muted); font-size: 11px; margin-top: 4px; }
+
+.status {
+  border: 1px solid rgba(87,227,162,.22);
+  color: var(--green);
+  background: rgba(87,227,162,.07);
+  border-radius: 30px;
+  padding: 7px 12px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+main { max-width: 1180px; margin: auto; padding: 58px 24px 80px; }
+
+.hero { text-align: center; margin-bottom: 38px; }
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  border: 1px solid var(--line);
+  border-radius: 30px;
+  color: #c5caff;
+  background: rgba(117,137,255,.07);
+  font-size: 12px;
+}
+
+.dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 10px var(--green);
+}
+
+h1 {
+  font-size: clamp(32px,5.2vw,56px);
+  line-height: 1.23;
+  letter-spacing: -1.5px;
+  margin: 22px 0 14px;
+  font-weight: 700;
+}
+
+.gradient {
+  background: linear-gradient(100deg,#70eeb6,#8a9bff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hero p {
+  color: var(--muted);
+  font-size: 16px;
+  max-width: 570px;
+  margin: auto;
+  line-height: 1.9;
+}
+
+.stats {
+  display: flex;
+  justify-content: center;
+  gap: 28px;
+  margin-top: 24px;
+  color: #aab3c9;
+  font-size: 12px;
+  flex-wrap: wrap;
+}
+
+.stats span::before { content: "✓"; color: var(--green); margin-right: 7px; }
+
+.workspace {
+  display: grid;
+  grid-template-columns: .88fr 1.12fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.card {
+  background: linear-gradient(155deg,rgba(20,27,43,.97),rgba(13,17,29,.97));
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 18px 60px rgba(0,0,0,.12);
+}
+
+.card-head {
+  padding: 21px 23px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.card-title { font-size: 17px; font-weight: 600; }
+.card-sub { font-size: 12px; color: var(--muted); margin-top: 3px; }
+
+.step {
+  font: 700 11px Inter,sans-serif;
+  color: #aab5ff;
+  background: rgba(117,137,255,.12);
+  border-radius: 8px;
+  padding: 7px 10px;
+}
+
+.card-body { padding: 22px; }
+
+.dropzone {
+  min-height: 220px;
+  border: 1px dashed rgba(117,137,255,.48);
+  background: radial-gradient(ellipse at center,rgba(117,137,255,.09),rgba(117,137,255,.025));
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 22px;
+  transition: .2s;
+}
+
+.dropzone.active {
+  border-color: var(--green);
+  background: rgba(87,227,162,.07);
+}
+
+.upload-icon {
+  width: 56px; height: 56px;
+  display: grid; place-items: center;
+  border-radius: 17px;
+  background: rgba(117,137,255,.13);
+  color: #a5b0ff;
+  font-size: 26px;
+  margin-bottom: 14px;
+}
+
+.drop-title { font-size: 17px; font-weight: 600; }
+.drop-desc { font-size: 12px; color: var(--muted); margin: 7px 0 16px; }
+
+.btn {
+  border: 0;
+  border-radius: 10px;
+  padding: 11px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: .2s;
+}
+
+.btn-primary {
+  color: #081710;
+  background: linear-gradient(110deg,#69e9b1,#7ee6c6);
+  box-shadow: 0 5px 20px rgba(87,227,162,.12);
+}
+
+.btn-primary:hover { transform: translateY(-1px); filter: brightness(1.06); }
+
+.btn-secondary {
+  color: #dfe4f6;
+  background: #20283a;
+  border: 1px solid var(--line);
+}
+
+.btn-secondary:hover { background: #2a344a; }
+
+.full { width: 100%; margin-top: 15px; padding: 14px; font-size: 14px; }
+
+.form-label {
+  font-size: 13px;
+  color: #c5ccdd;
+  display: block;
+  margin: 22px 0 9px;
+}
+
+.options { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.option {
+  padding: 8px 12px;
+  color: #b2bbcf;
+  border: 1px solid var(--line);
+  background: #111827;
+  border-radius: 9px;
+  font-size: 12px;
+}
+
+.option.selected {
+  color: var(--green);
+  border-color: rgba(87,227,162,.45);
+  background: rgba(87,227,162,.07);
+}
+
+.file-info {
+  display: none;
+  background: rgba(87,227,162,.06);
+  border: 1px solid rgba(87,227,162,.2);
+  border-radius: 11px;
+  padding: 12px;
+  margin-top: 14px;
+  font-size: 12px;
+  color: var(--green);
+  overflow-wrap: anywhere;
+}
+
+.progress-wrap { display:none; margin-top: 17px; }
+.progress-label { display:flex; justify-content:space-between; font-size:12px; color:var(--muted); margin-bottom:8px; }
+.progress-track { height:5px; border-radius:10px; background:#252d40; overflow:hidden; }
+.progress-bar { width:0; height:100%; background:linear-gradient(90deg,#57e3a2,#7e91ff); transition:width .3s; }
+
+.result-card { min-height: 450px; }
+
+.result-tabs {
+  display:flex;
+  gap: 20px;
+  border-bottom:1px solid var(--line);
+  padding: 0 22px;
+}
+
+.tab {
+  background:transparent;
+  border:0;
+  color:var(--muted);
+  padding:16px 0 13px;
+  font-size:13px;
+  border-bottom:2px solid transparent;
+}
+
+.tab.active { color:var(--green); border-color:var(--green); }
+
+.result-content { padding:22px; }
+
+.empty-state {
+  min-height:310px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  padding:20px;
+}
+
+.empty-icon {
+  width:66px; height:66px;
+  display:grid; place-items:center;
+  border-radius:20px;
+  background:linear-gradient(145deg,#202943,#151c2c);
+  border:1px solid var(--line);
+  font-size:28px;
+  margin-bottom:18px;
+}
+
+.empty-title { font-size:18px; font-weight:600; }
+.empty-text { max-width:290px; font-size:13px; line-height:1.8; color:var(--muted); margin-top:8px; }
+
+.transcript { display:none; }
+
+.segment {
+  display:flex;
+  gap:12px;
+  padding:13px 0;
+  border-bottom:1px solid var(--line);
+  line-height:1.9;
+  font-size:14px;
+}
+
+.timestamp {
+  flex-shrink:0;
+  align-self:flex-start;
+  border:1px solid rgba(117,137,255,.25);
+  color:#aab5ff;
+  background:rgba(117,137,255,.08);
+  border-radius:6px;
+  padding:2px 7px;
+  font:11px Inter,sans-serif;
+  margin-top:4px;
+}
+
+.result-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:18px; }
+
+.notice {
+  border:1px solid rgba(255,199,102,.18);
+  background:rgba(255,199,102,.045);
+  color:#c7b68f;
+  padding:12px 14px;
+  border-radius:11px;
+  font-size:11px;
+  line-height:1.8;
+  margin-top:20px;
+}
+
+.bottom {
+  text-align:center;
+  padding:25px 15px;
+  border-top:1px solid var(--line);
+  color:#747e94;
+  font-size:12px;
+}
+
+.bottom strong { color:#adb6ca; font-weight:500; }
+
+.toast {
+  position:fixed;
+  bottom:22px;
+  left:50%;
+  transform:translate(-50%,20px);
+  opacity:0;
+  pointer-events:none;
+  padding:12px 18px;
+  border-radius:12px;
+  color:#081710;
+  background:#70eab6;
+  font-size:13px;
+  font-weight:600;
+  transition:.25s;
+  z-index:10;
+  width:max-content;
+  max-width:90%;
+}
+
+.toast.show { opacity:1; transform:translate(-50%,0); }
+
+@media(max-width:760px) {
+  .topbar { height:68px; padding:0 17px; }
+  .brand-name { font-size:14px; }
+  .brand-sub { font-size:10px; }
+  .logo { width:38px;height:38px; }
+  .status { font-size:10px;padding:6px 9px; }
+  main { padding:37px 15px 50px; }
+  .hero { margin-bottom:27px; }
+  h1 { letter-spacing:-.8px; }
+  .hero p { font-size:14px; }
+  .stats { gap:10px 18px; }
+  .workspace { grid-template-columns:1fr; }
+  .card-head { padding:18px; }
+  .card-body { padding:17px; }
+  .result-content { padding:17px; }
+  .dropzone { min-height:200px; }
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<header class="topbar">
+  <div class="brand">
+    <div class="logo">✳</div>
+    <div>
+      <div class="brand-name">Bangla AI <span>Studio</span></div>
+      <div class="brand-sub">INTELLIGENT NEWS WORKSPACE</div>
+    </div>
+  </div>
+  <div class="status"><span class="dot" style="display:inline-block;margin-right:6px"></span> Studio Preview</div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="eyebrow"><span class="dot"></span> NEXT-GEN BANGLA NEWS WORKSPACE</div>
+    <h1>আপনার অডিও থেকে<br><span class="gradient">সংবাদ তৈরি করুন</span></h1>
+    <p>অডিও ও ভিডিওর কথাগুলোকে ট্রান্সক্রিপ্ট, টাইমস্ট্যাম্প এবং সংবাদ প্রতিবেদনে রূপান্তরের জন্য একটি আধুনিক AI স্টুডিও।</p>
+    <div class="stats">
+      <span>বাংলা-কেন্দ্রিক ডিজাইন</span>
+      <span>Audio & Video</span>
+      <span>Newsroom Workflow</span>
+    </div>
+  </section>
+
+  <section class="workspace">
+
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">মিডিয়া আপলোড</div>
+          <div class="card-sub">আপনার ফাইল দিয়ে শুরু করুন</div>
+        </div>
+        <div class="step">STEP 01</div>
+      </div>
+
+      <div class="card-body">
+        <div class="dropzone" id="dropzone">
+          <div class="upload-icon">↑</div>
+          <div class="drop-title">ফাইল এখানে নির্বাচন করুন</div>
+          <div class="drop-desc">অডিও অথবা ভিডিও ফাইল আপলোড করুন</div>
+          <button class="btn btn-secondary" id="chooseBtn">ফাইল নির্বাচন করুন ↗</button>
+          <input type="file" id="fileInput" accept="audio/*,video/*,.mp3,.mp4,.wav,.m4a,.aac,.ogg,.webm,.mov" hidden>
+        </div>
+
+        <div class="file-info" id="fileInfo"></div>
+
+        <label class="form-label">ট্রান্সক্রিপ্টের ভাষা</label>
+        <div class="options" id="languageOptions">
+          <button class="option selected" data-value="bn">বাংলা</button>
+          <button class="option" data-value="bn-en">বাংলা + English</button>
+          <button class="option" data-value="auto">Auto Detect</button>
+        </div>
+
+        <label class="form-label">আউটপুটের ধরন</label>
+        <div class="options" id="outputOptions">
+          <button class="option selected" data-value="transcript">ট্রান্সক্রিপ্ট</button>
+          <button class="option" data-value="news">সংবাদ প্রতিবেদন</button>
+          <button class="option" data-value="both">দুটিই</button>
+        </div>
+
+        <button class="btn btn-primary full" id="processBtn">✦ AI দিয়ে প্রসেস করুন</button>
+
+        <div class="progress-wrap" id="progressWrap">
+          <div class="progress-label">
+            <span id="progressText">প্রস্তুত হচ্ছে...</span>
+            <span id="progressPercent">0%</span>
+          </div>
+          <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+        </div>
+
+        <div class="notice">
+          <strong>প্রিভিউ সংস্করণ:</strong> এই ইন্টারফেসটি তৈরি হয়েছে। বাস্তব AI ট্রান্সক্রিপশন চালু করতে পরবর্তী ধাপে নিরাপদ AI API ও ব্যাকএন্ড যুক্ত করতে হবে।
+        </div>
+      </div>
+    </div>
+
+    <div class="card result-card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">আপনার ওয়ার্কস্পেস</div>
+          <div class="card-sub">ট্রান্সক্রিপ্ট ও নিউজ আউটপুট</div>
+        </div>
+        <div class="step">STEP 02</div>
+      </div>
+
+      <div class="result-tabs">
+        <button class="tab active" data-tab="transcript">ট্রান্সক্রিপ্ট</button>
+        <button class="tab" data-tab="news">সংবাদ</button>
+      </div>
+
+      <div class="result-content">
+        <div class="empty-state" id="emptyState">
+          <div class="empty-icon">✧</div>
+          <div class="empty-title">আপনার ফলাফল এখানে আসবে</div>
+          <div class="empty-text">বাম পাশ থেকে একটি মিডিয়া ফাইল নির্বাচন করুন। AI প্রসেসিং যুক্ত হলে এখানে ট্রান্সক্রিপ্ট ও সংবাদ দেখা যাবে।</div>
+        </div>
+
+        <div class="transcript" id="transcriptResult">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+            <div style="font-size:13px;color:#9ca8c0">ট্রান্সক্রিপ্ট প্রিভিউ</div>
+            <div style="font-size:11px;color:#57e3a2">Demo Content</div>
+          </div>
+          <div class="segment">
+            <button class="timestamp" data-time="0">00:00</button>
+            <div>বাংলা AI News Studio-তে আপনাকে স্বাগতম। এটি ট্রান্সক্রিপ্টের একটি ডেমো প্রিভিউ।</div>
+          </div>
+          <div class="segment">
+            <button class="timestamp" data-time="5">00:05</button>
+            <div>বাস্তব সংবাদ ও বক্তব্য থেকে নির্ভুল লেখা তৈরি করতে AI ট্রান্সক্রিপশন পরিষেবা যুক্ত করতে হবে।</div>
+          </div>
+          <div class="segment">
+            <button class="timestamp" data-time="10">00:10</button>
+            <div>প্রসেসিং সিস্টেম যুক্ত হলে টাইমস্ট্যাম্প ধরে অডিওর নির্দিষ্ট অংশ শোনার সুবিধাও যোগ করা যাবে।</div>
+          </div>
+          <div class="result-actions">
+            <button class="btn btn-secondary" id="copyBtn">কপি করুন</button>
+            <button class="btn btn-secondary" id="downloadBtn">TXT ডাউনলোড</button>
+          </div>
+          <div class="notice">এটি শুধু ডেমো টেক্সট, আপনার আপলোড করা ফাইলের আসল ট্রান্সক্রিপ্ট নয়।</div>
+        </div>
+
+        <div class="transcript" id="newsResult">
+          <div style="font-size:11px;color:#57e3a2;margin-bottom:12px">DEMO NEWS REPORT</div>
+          <h2 style="font-size:23px;line-height:1.5;margin:0 0 15px">প্রযুক্তির সহায়তায় বাংলা সংবাদ তৈরির নতুন সম্ভাবনা</h2>
+          <p style="font-size:14px;line-height:2;color:#c2cadb">অডিও ও ভিডিও থেকে তথ্য সংগ্রহ, বক্তব্যকে লিখিত রূপ দেওয়া এবং সংবাদ প্রতিবেদন তৈরির কাজে কৃত্রিম বুদ্ধিমত্তা গুরুত্বপূর্ণ ভূমিকা রাখতে পারে। তবে নির্ভুল ফলাফলের জন্য মূল বক্তব্য যাচাই করা জরুরি।</p>
+          <div class="notice">এটি উদাহরণ হিসেবে তৈরি ডেমো সংবাদ। আপলোড করা ফাইল থেকে তৈরি করা হয়নি।</div>
+          <div class="result-actions">
+            <button class="btn btn-secondary" id="copyNewsBtn">সংবাদ কপি করুন</button>
+            <button class="btn btn-secondary" id="downloadNewsBtn">TXT ডাউনলোড</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+</main>
+
+<footer class="bottom">
+  <strong>Bangla AI Studio</strong> · A smarter workspace for Bangla news
+  <div style="margin-top:6px">Built for a better newsroom workflow.</div>
+</footer>
+
+<div class="toast" id="toast"></div>
+</div>
+
+<script>
+const fileInput = document.getElementById('fileInput');
+const chooseBtn = document.getElementById('chooseBtn');
+const dropzone = document.getElementById('dropzone');
+const fileInfo = document.getElementById('fileInfo');
+const processBtn = document.getElementById('processBtn');
+const progressWrap = document.getElementById('progressWrap');
+const progressBar = document.getElementById('progressBar');
+const progressText = document.getElementById('progressText');
+const progressPercent = document.getElementById('progressPercent');
+const emptyState = document.getElementById('emptyState');
+const transcriptResult = document.getElementById('transcriptResult');
+const newsResult = document.getElementById('newsResult');
+const toast = document.getElementById('toast');
+
+let selectedFile = null;
+let selectedLanguage = 'bn';
+let selectedOutput = 'transcript';
+let activeTab = 'transcript';
+let toastTimer;
+
+function showToast(message) {
+  toast.textContent = message;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
+}
+
+function formatSize(bytes) {
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(0) + ' KB';
+  return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+}
+
+function setFile(file) {
+  if (!file) return;
+
+  const allowed = /audio\/|video\/|\.mp3$|\.mp4$|\.wav$|\.m4a$|\.aac$|\.ogg$|\.webm$|\.mov$/i;
+  if (!allowed.test(file.type + ' ' + file.name)) {
+    showToast('দয়া করে একটি অডিও বা ভিডিও ফাইল নির্বাচন করুন।');
+    return;
+  }
+
+  selectedFile = file;
+  fileInfo.style.display = 'block';
+  fileInfo.textContent = '✓ ' + file.name + ' · ' + formatSize(file.size);
+  dropzone.classList.add('active');
+  processBtn.textContent = '✦ AI দিয়ে প্রসেস করুন';
+  showToast('ফাইল নির্বাচন সফল হয়েছে।');
+}
+
+chooseBtn.addEventListener('click', () => fileInput.click());
+
+dropzone.addEventListener('click', (e) => {
+  if (e.target !== chooseBtn) fileInput.click();
+});
+
+fileInput.addEventListener('change', () => setFile(fileInput.files[0]));
+
+['dragenter','dragover'].forEach(type => {
+  dropzone.addEventListener(type, e => {
+    e.preventDefault();
+    dropzone.classList.add('active');
+  });
+});
+
+['dragleave','drop'].forEach(type => {
+  dropzone.addEventListener(type, e => {
+    e.preventDefault();
+    if (type === 'drop') setFile(e.dataTransfer.files[0]);
+    else if (!selectedFile) dropzone.classList.remove('active');
+  });
+});
+
+function setupOptions(containerId, callback) {
+  document.querySelectorAll('#' + containerId + ' .option').forEach(button => {
+    button.addEventListener('click', () => {
+      document.querySelectorAll('#' + containerId + ' .option').forEach(b => b.classList.remove('selected'));
+      button.classList.add('selected');
+      callback(button.dataset.value);
+    });
+  });
+}
+
+setupOptions('languageOptions', value => selectedLanguage = value);
+setupOptions('outputOptions', value => selectedOutput = value);
+
+function switchTab(tab) {
+  activeTab = tab;
+  document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  transcriptResult.style.display = tab === 'transcript' ? 'block' : 'none';
+  newsResult.style.display = tab === 'news' ? 'block' : 'none';
+  emptyState.style.display = 'none';
+}
+
+document.querySelectorAll('.tab').forEach(button => {
+  button.addEventListener('click', () => {
+    if (!selectedFile) {
+      switchTab(button.dataset.tab);
+      return;
+    }
+    switchTab(button.dataset.tab);
+  });
+});
+
+processBtn.addEventListener('click', () => {
+  if (!selectedFile) {
+    showToast('প্রথমে একটি অডিও বা ভিডিও ফাইল নির্বাচন করুন।');
+    return;
+  }
+
+  showToast('ইন্টারফেস প্রস্তুত, কিন্তু AI API এখনো যুক্ত করা হয়নি।');
+  progressWrap.style.display = 'block';
+  progressBar.style.width = '0%';
+  progressPercent.textContent = '0%';
+  progressText.textContent = 'AI ব্যাকএন্ড সংযুক্ত করা বাকি';
+});
+
+function getTranscriptText() {
+  return Array.from(transcriptResult.querySelectorAll('.segment'))
+    .map(segment => {
+      const time = segment.querySelector('.timestamp').textContent;
+      const text = segment.querySelector('div').textContent;
+      return '[' + time + '] ' + text;
+    }).join('\n');
+}
+
+function getNewsText() {
+  return newsResult.innerText;
+}
+
+async function copyText(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    showToast('লেখা কপি হয়েছে।');
+  } catch (e) {
+    const area = document.createElement('textarea');
+    area.value = text;
+    document.body.appendChild(area);
+    area.select();
+    document.execCommand('copy');
+    area.remove();
+    showToast('লেখা কপি হয়েছে।');
+  }
+}
+
+function downloadText(text, filename) {
+  const blob = new Blob([text], {type:'text/plain;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(url);
+  showToast('ফাইল ডাউনলোড শুরু হয়েছে।');
+}
+
+document.getElementById('copyBtn').addEventListener('click', () => copyText(getTranscriptText()));
+document.getElementById('downloadBtn').addEventListener('click', () => downloadText(getTranscriptText(), 'bangla-transcript-demo.txt'));
+document.getElementById('copyNewsBtn').addEventListener('click', () => copyText(getNewsText()));
+document.getElementById('downloadNewsBtn').addEventListener('click', () => downloadText(getNewsText(), 'bangla-news-demo.txt'));
+
+document.querySelectorAll('.timestamp').forEach(button => {
+  button.addEventListener('click', () => {
+    if (!selectedFile) {
+      showToast('অডিও চালাতে প্রথমে একটি ফাইল নির্বাচন করুন।');
+      return;
+    }
+
+    showToast('টাইমস্ট্যাম্প প্লেব্যাক ব্যাকএন্ডের পরবর্তী ধাপে যুক্ত হবে।');
+  });
+});
+</script>
+</body>
+</html>

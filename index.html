@@ -664,17 +664,70 @@ document.querySelectorAll('.tab').forEach(button => {
   });
 });
 
-processBtn.addEventListener('click', () => {
+processBtn.addEventListener('click', async () => {
   if (!selectedFile) {
     showToast('প্রথমে একটি অডিও বা ভিডিও ফাইল নির্বাচন করুন।');
     return;
   }
 
-  showToast('ইন্টারফেস প্রস্তুত, কিন্তু AI API এখনো যুক্ত করা হয়নি।');
+  // লোডিং শুরু
   progressWrap.style.display = 'block';
-  progressBar.style.width = '0%';
-  progressPercent.textContent = '0%';
-  progressText.textContent = 'AI ব্যাকএন্ড সংযুক্ত করা বাকি';
+  progressBar.style.width = '30%';
+  progressPercent.textContent = '30%';
+  progressText.textContent = 'ফাইল আপলোড হচ্ছে...';
+  processBtn.disabled = true;
+  processBtn.textContent = 'অপেক্ষা করুন...';
+
+  const formData = new FormData();
+  formData.append('file', selectedFile);
+
+  try {
+    progressBar.style.width = '70%';
+    progressPercent.textContent = '70%';
+    progressText.textContent = 'AI সংবাদ তৈরি করছে...';
+
+    // আপনার Cloudflare Worker-এর লিংক
+    const response = await fetch('https://bangla-ai-news.rahaman-gazi-4558.workers.dev/', {
+      method: 'POST',
+      body: formData
+    });
+
+    const data = await response.json();
+
+    progressBar.style.width = '100%';
+    progressPercent.textContent = '100%';
+    progressText.textContent = 'সম্পন্ন হয়েছে!';
+
+    if (data.error) {
+      showToast('সমস্যা হয়েছে: ' + data.error);
+    } else {
+      // সফল হলে ডেমো টেক্সট সরিয়ে আসল রেজাল্ট বসানো
+      emptyState.style.display = 'none';
+      switchTab('news');
+      
+      newsResult.innerHTML = `
+        <div style="font-size:11px;color:#57e3a2;margin-bottom:12px">AI GENERATED NEWS</div>
+        <h2 style="font-size:23px;line-height:1.5;margin:0 0 15px">${data.headline || 'কোনো হেডলাইন পাওয়া যায়নি'}</h2>
+        <p style="font-size:14px;line-height:2;color:#c2cadb">${data.report ? data.report.replace(/\n/g, '<br>') : 'কোনো রিপোর্ট পাওয়া যায়নি'}</p>
+        <div class="result-actions">
+          <button class="btn btn-secondary" id="copyNewsBtnFinal">সংবাদ কপি করুন</button>
+          <button class="btn btn-secondary" id="downloadNewsBtnFinal">TXT ডাউনলোড</button>
+        </div>
+      `;
+
+      // নতুন কপি ও ডাউনলোড বাটন চালু করা
+      document.getElementById('copyNewsBtnFinal').addEventListener('click', () => copyText(newsResult.innerText));
+      document.getElementById('downloadNewsBtnFinal').addEventListener('click', () => downloadText(newsResult.innerText, 'bangla-news.txt'));
+      
+      showToast('সফলভাবে সংবাদ তৈরি হয়েছে!');
+    }
+  } catch (error) {
+    showToast('সার্ভারের সাথে সংযোগ করা যায়নি!');
+    progressText.textContent = 'ব্যর্থ হয়েছে';
+  } finally {
+    processBtn.disabled = false;
+    processBtn.textContent = '✦ AI দিয়ে প্রসেস করুন';
+  }
 });
 
 function getTranscriptText() {

@@ -687,7 +687,7 @@ processBtn.addEventListener('click', async () => {
     progressText.textContent = 'AI সংবাদ তৈরি করছে...';
 
     // আপনার Cloudflare Worker-এর লিংক
-    const response = await fetch('https://bangla-ai-news.rahaman-gazi-4558.workers.dev/', {
+    const response = await fetch('https://ai-backend.rahaman-gazi-4558.workers.dev/', {
       method: 'POST',
       body: formData
     });
